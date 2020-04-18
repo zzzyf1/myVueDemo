@@ -8,6 +8,7 @@ import deleteStop from '@/components/deleteStop'
 import searchStop from '@/components/searchStop'
 import updateStop from '@/components/updateStop'
 import addRoute from '@/components/addRoute'
+import driverManagement from '@/components/driverManagement'
 Vue.use(Router);
 export default new Router({
   routes: [//配置路由，是一个数组
@@ -30,6 +31,8 @@ export default new Router({
               //{path:'/updateStop', name: 'updateStop', component : updateStop , meta:{ Verify:true}},
               {path : '/editRoute', name : 'editRoute', component : editRoute , meta:{ Verify:true}},
               {path : '/addRoute', name : 'addRoute', component : addRoute , meta:{ Verify:true}},
+              {path : '/driverManagement' , name : 'driverManagement' ,component : driverManagement,meta:{ Verify:true}}
+
           ]
 
       }

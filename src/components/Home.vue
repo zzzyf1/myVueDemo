@@ -14,7 +14,7 @@
                 <el-menu-item index="1-2">添加线路</el-menu-item>
             </el-submenu>
             <el-menu-item index="2">站点管理</el-menu-item>
-            <el-menu-item index="3" disabled>站点二维码</el-menu-item>
+            <el-menu-item index="3">人员管理</el-menu-item>
             <el-menu-item index="4" ><el-link :underline="false" href="http://api.map.baidu.com/lbsapi/getpoint/index.html" target="_blank">坐标拾取器</el-link></el-menu-item>
         </el-menu>
 
@@ -57,7 +57,9 @@
                     case '2':
                         this.$router.push('/searchStop');
                         break;
-
+                    case '3':
+                        this.$router.push('/driverManagement');
+                        break;
                 }
             }
 
