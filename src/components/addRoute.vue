@@ -125,8 +125,8 @@
                     this.$axios.post("/selectRouteByName",this.search).then(responseText=>{
                         if(responseText.data.length>0){
                             this.loading=false;
-                            this.$notify.info({
-                                title: '提示',
+                            this.$message.info({
+                                showClose:true,
                                 message: '线路名称重复，请更换'
                             });
 
@@ -144,8 +144,8 @@
                         console.log(error);
                     })
                 }else{
-                    this.$notify.info({
-                        title: '提示',
+                    this.$message.info({
+                        showClose:true,
                         message: '输入内容不能为空'
                     });
                 }
@@ -169,8 +169,8 @@
                         this.secondSeen=false;
                         this.thirdSeen=true;
                     }else{
-                        this.$notify.info({
-                            title: '提示',
+                        this.$message.info({
+                            showClose:true,
                             message: '线路至少包括2个站点'
                         });
                     }
@@ -184,8 +184,8 @@
                     console.log(this.value);
                     console.log(this.search);
                 }else{
-                    this.$notify.info({
-                        title: '提示',
+                    this.$message.info({
+                        showClose:true,
                         message: '至少为此线路选择一位司机'
                     });
                 }
@@ -231,14 +231,15 @@
                             console.log("-----------------------");
                             console.log(responseText);
                             if(responseText.data===1){
-                                this.$notify({
-                                    title: '成功',
+                                this.$message.success({
+                                    showClose:true,
                                     message: '新线路添加成功',
-                                    type: 'success'
+
                                 });
+                                this.$router.push("/editRoute");
                             }else{
-                                this.$notify.error({
-                                    title: '错误',
+                                this.$message.error({
+                                   showClose:true,
                                     message: '系统繁忙，请稍后再试'
                                 });
                             }
@@ -250,8 +251,8 @@
                         console.log(error);
                     });
                 }else{
-                    this.$notify.info({
-                        title: '提示',
+                    this.$message.info({
+                        showClose:true,
                         message: '至少为此线路选择一位司机'
                     });
                 }

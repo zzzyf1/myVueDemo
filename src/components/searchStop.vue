@@ -101,10 +101,13 @@
                     <el-form-item label="所处经度" :label-width="formLabelWidth" prop="longitude">
                         <el-input v-model="form.longitude" autocomplete="off" style="width: 360px" clearable prefix-icon="el-icon-place"></el-input>
                     </el-form-item>
+                    <el-form-item label="所处街道" :label-width="formLabelWidth" prop="street">
+                        <el-input v-model="form.street" autocomplete="off" style="width: 360px" clearable prefix-icon="el-icon-place"></el-input>
+                    </el-form-item>
                 </el-form>
                 <div slot="footer" class="dialog-footer">
                     <el-button type="danger" @click="dialogFormVisible = false" icon="el-icon-close">取 消</el-button>
-                    <el-button type="primary" @click="refreshStop" icon="el-icon-refresh">更新</el-button>
+                    <el-button type="primary" @click="refreshStop" icon="el-icon-refresh" v-bind:loading="loading">更新</el-button>
                 </div>
             </el-dialog>
         </template>
@@ -122,6 +125,9 @@
                     </el-form-item>
                     <el-form-item label="所处经度" :label-width="formLabelWidth" prop="longitude">
                         <el-input v-model="form.longitude" autocomplete="off" style="width: 360px" clearable prefix-icon="el-icon-place"></el-input>
+                    </el-form-item>
+                    <el-form-item label="所处街道" :label-width="formLabelWidth" prop="street">
+                        <el-input v-model="form.street" autocomplete="off" style="width: 360px" clearable prefix-icon="el-icon-place"></el-input>
                     </el-form-item>
                 </el-form>
                 <div slot="footer" class="dialog-footer">
@@ -193,7 +199,8 @@
                     station_id:0,
                     stop_name:'',
                     latitude:1,
-                    longitude:1
+                    longitude:1,
+                    street:'',
 
                 },
                 rules:{
@@ -208,6 +215,9 @@
                     longitude:[
                         {required: true, message: '请输入纬度坐标', trigger: 'change'},
                         {validator: checkLongitude, trigger: 'blur'}
+                    ],
+                    street:[
+                        {required: true, message: '请输入街道名称', trigger: 'change'},
                     ]
 
                 }
@@ -250,7 +260,8 @@
             get_qr_code(row3){
                 console.log(row3);
                 this.QRDialogVisible=true;
-                this.src='http://localhost:8080/static/img/stop_'+row3.station_id+'.jpg';
+                //this.headerImgUrl="http://localhost:8080/static/img/driver/driver_"+this.form.driver_id+".jpg?time="+new Date();
+                this.src='http://localhost:8080/static/img/driver/stop_'+row3.station_id+'.jpg?time='+new Date();
                 this.Message=row3.stop_name;
                 //this.data.Message=row3.stop_name;
             },
@@ -281,22 +292,24 @@
             refreshStop(){
                 this.$refs.form.validate((valid)=>{
                     if(valid){
+                        this.loading=true;
                         this.$axios.post("/UpdStop",this.form).then(responseText=>{
                             console.log(responseText);
                             if(responseText.status===200){
+                                this.loading=false;
                                 this.dialogFormVisible=false;
                                 this.queryStopByName();
-                                this.$notify({
-                                    title: '成功',
+                                this.$message.success({
+                                    showClose:true,
                                     message: '更新数据已同步',
-                                    type: 'success'
                                 });
                             }else{
+                                this.loading=false;
                                 this.dialogFormVisible=false;
-                                this.$notify.error({
-                                    title: '错误',
+                                this.$message.error({
+                                    showClose:true,
                                     message: '数据同步失败',
-                                    type: 'error'
+
                                 });
                             }
                         }).catch(error=>{
@@ -318,17 +331,16 @@
                     console.log(responseText);
                     if(responseText.status===200){
                         this.queryStopByName();
-                        this.$notify({
-                            title: '成功',
+                        this.$message.success({
+                            showClose:true,
                             message: '删除数据已同步',
-                            type: 'success'
+
                         });
                     }else{
                         this.dialogFormVisible=false;
-                        this.$notify.error({
-                            title: '错误',
+                        this.$message.error({
+                            showClose:true,
                             message: '数据同步失败',
-                            type: 'error'
                         });
                     }
                 }).catch((error)=>{
@@ -347,18 +359,18 @@
                                 this.AddDialogFormVisible=false;
                                 this.searchInput=this.form.stop_name;
                                 this.queryStopByName();
-                                this.$notify({
-                                    title: '成功',
+                                this.$message.success({
+                                    showClose:true,
                                     message: '添加数据已同步',
-                                    type: 'success'
+
                                 });
                             }else{
                                 this.loading=false;
                                 this.dialogFormVisible=false;
-                                this.$notify.error({
-                                    title: '错误',
+                                this.$message.error({
+                                    showClose:true,
                                     message: '数据同步失败',
-                                    type: 'error'
+
                                 });
                             }
                         }).catch(error=>{

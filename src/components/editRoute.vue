@@ -31,7 +31,10 @@
                         <el-container style="height: 400px; border: 1px solid #eee">
                             <template>
                                 <el-main style="border:1px solid #eee">
-                                    <el-timeline>
+                                    <div style="margin-left: 10px">
+                                        <el-tag type="success">途径站数</el-tag><span style="margin-left: 10px">共 {{routeStops.length}} 站</span>
+                                    </div>
+                                    <el-timeline style="margin-top: 8px">
                                         <el-timeline-item
                                                 v-for="(routeStop, index) in routeStops"
                                                 :key="index"
@@ -41,17 +44,26 @@
                                             {{routeStop.stop_name}}
                                         </el-timeline-item>
                                     </el-timeline>
-                                    <div style="margin-left: 10px">
-                                        <el-tag type="success">途径站数</el-tag><span style="margin-left: 10px">共 {{routeStops.length}} 站</span>
-                                    </div>
                                 </el-main>
                             </template>
 
                             <el-footer>
                                 <div align="right" style="margin-top: 10px">
                                     <el-button-group>
-                                        <el-button type="primary" icon="el-icon-edit"></el-button>
-                                        <el-button type="danger" icon="el-icon-delete" ></el-button>
+                                        <!--<el-button type="primary" icon="el-icon-edit"></el-button>
+                                        <el-button type="danger" icon="el-icon-delete" @click="deleteRoute" ></el-button>-->
+                                        <template>
+                                            <el-popconfirm
+                                                    confirmButtonText='好的'
+                                                    cancelButtonText='不用了'
+                                                    icon="el-icon-info"
+                                                    iconColor="red"
+                                                    :title="title"
+                                                    @onConfirm="deleteRoute()"
+                                            >
+                                                <el-button type="danger" icon="el-icon-delete" class="button" slot="reference" @click="getRouteTitle"></el-button>
+                                            </el-popconfirm>
+                                        </template>
                                     </el-button-group>
                                 </div>
                             </el-footer>
@@ -77,6 +89,7 @@
                 searchRouteInput:'',
                 seen:false,
                 routeStops:[],
+                title:''
             }
         },
         mounted:function(){
@@ -96,8 +109,8 @@
                         }else{
                             console.log(responseText);
                             this.seen=false;
-                            this.$notify.info({
-                                title: '提示',
+                            this.$message.info({
+                                showClose:true,
                                 message: '未查询到关于 “'+this.searchRouteInput+' ”的信息'
                             });
                         }
@@ -109,6 +122,36 @@
                 }
 
             },
+            deleteRoute(){
+                this.$axios.post("/deleteRoute",this.routeStops[0].route_id).then(res=>{
+                    if(res.status==200&&res.data=="1"){
+                        this.$message.success({
+                            showClose:true,
+                            message:"已经成功删除线路 ："+this.routeStops[0].description
+                        });
+                        this.queryRouteByName();
+                    }
+                    if(res.data==2){
+                        this.$message.info({
+                            showClose:true,
+                            message:"网络繁忙，请稍后再试"
+                        })
+                    }
+
+                }).catch(error=>{
+                    console.log(error);
+                    this.$message.error({
+                        showClose:true,
+                        message:"系统维护中，请稍后再试"
+                    })
+
+                })
+
+
+            },
+            getRouteTitle(){
+                this.title="确定要删除 ："+this.routeStops[0].description;
+            }
         }
 
     }
